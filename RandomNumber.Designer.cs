@@ -90,7 +90,7 @@ namespace RandomNumber
             this.FedDistrictComboBox.Size = new System.Drawing.Size(221, 49);
             this.FedDistrictComboBox.StartIndex = 0;
             this.FedDistrictComboBox.TabIndex = 3;
-            this.FedDistrictComboBox.SelectedIndexChanged += new System.EventHandler(this.materialComboBox1_SelectedIndexChanged);
+            this.FedDistrictComboBox.SelectedIndexChanged += new System.EventHandler(this.FedDistrictComboBox_SelectedIndexChanged);
             // 
             // RegionComboBox
             // 
@@ -200,7 +200,7 @@ namespace RandomNumber
             this.RegionComboBox.Size = new System.Drawing.Size(212, 49);
             this.RegionComboBox.StartIndex = 0;
             this.RegionComboBox.TabIndex = 3;
-            this.RegionComboBox.SelectedIndexChanged += new System.EventHandler(this.materialComboBox1_SelectedIndexChanged);
+            this.RegionComboBox.SelectedIndexChanged += new System.EventHandler(this.RegionComboBox_SelectedIndexChanged);
             // 
             // TypeNumberComboBox
             // 
@@ -227,7 +227,7 @@ namespace RandomNumber
             this.TypeNumberComboBox.Size = new System.Drawing.Size(221, 49);
             this.TypeNumberComboBox.StartIndex = 0;
             this.TypeNumberComboBox.TabIndex = 3;
-            this.TypeNumberComboBox.SelectedIndexChanged += new System.EventHandler(this.materialComboBox1_SelectedIndexChanged);
+            this.TypeNumberComboBox.SelectedIndexChanged += new System.EventHandler(this.FedDistrictComboBox_SelectedIndexChanged);
             // 
             // AmountMaskedTextBox
             // 
