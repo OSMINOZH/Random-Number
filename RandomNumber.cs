@@ -24,6 +24,7 @@ namespace RandomNumber
         private int townCode = 0, countNumbers = 0, howManyNumbers = 0, utc;    // USED TO GENERATE NUMBERS ONLY
         private bool prefixOn = false;
         private List<string> finalNumbers = new List<string>();
+        private List<string> operatorName = new List<string>();
         private List<long> codeFull = new List<long>();
         private bool maxNumberExist = false;
         private void AddItems(string typeBox)
@@ -662,7 +663,12 @@ namespace RandomNumber
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (FedDistrictComboBox.SelectedItem.ToString() == "Не выбран") { GenerateNumbersBTN.Enabled = false; RegionComboBox.Enabled = false; }
+            else { GenerateNumbersBTN.Enabled = true; RegionComboBox.Enabled = true; }
 
+            // TEMPORARY //
+            if (TypeNumberComboBox.SelectedItem.ToString() == "Стационарный") GenerateNumbersBTN.Enabled = false;
+            else if (FedDistrictComboBox.SelectedItem.ToString() != "Не выбран")GenerateNumbersBTN.Enabled = true;
         }
 
         private void FedDistrictComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -682,32 +688,23 @@ namespace RandomNumber
 
         private void GenerateNumbersBTN_Click(object sender, EventArgs e)
         {
-            fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
-            region = RegionComboBox.SelectedItem.ToString();
-            typeNumber = TypeNumberComboBox.SelectedItem.ToString();
+            //fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
+            //region = RegionComboBox.SelectedItem.ToString();
+            //typeNumber = TypeNumberComboBox.SelectedItem.ToString();
             howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
-
-            GenerateNumbers();
+            if (RegionComboBox.SelectedItem.ToString() == "Не выбран") GenerateNumbers("fed", FedDistrictComboBox.SelectedItem.ToString()); // Fed or Region switcher
+            else GenerateNumbers("region", RegionComboBox.SelectedItem.ToString());
         }
 
-        private void NumberPrefixRBTN_Click(object sender, EventArgs e)
+        private void GenerateNumbers(string regionORfed, string selectName) // maybe async start in future !!!
         {
-            prefixOn = true;
-        }
+            codeFull.Clear();             // Очищение списка перед присваиванием
+            finalNumbers.Clear();        // Очищение списка перед присваиванием
+            operatorName.Clear();       // Очищение списка перед присваиванием
 
-        private void WriteNumbers(int times, int numbers)
-        {
-
-            Logger.WriteLog($"");
-        }
-
-        private void GenerateNumbers() // maybe async start in future !!!
-        {
-            codeFull.Clear();        // Очищение списка перед присваиванием
-            finalNumbers.Clear();   // Очищение списка перед присваиванием
-            string operatorName = (LoadWriteData($"SELECT operatorName FROM operators WHERE region ='{region}' LIMIT 1"));
-            int shortCode = Convert.ToInt32(LoadWriteData($"SELECT shortCode FROM operators WHERE region ='{region}' LIMIT 1"));
-            codeListAdd($"SELECT codeFull FROM operators WHERE region ='{region}'"); // reset the limit // delete previous number when it`s bigger than const number  
+            //string operatorName = (LoadWriteData($"SELECT operatorName FROM operators WHERE {regionORfed} ='{selectName}' LIMIT 1"));
+            int shortCode = Convert.ToInt32(LoadWriteData($"SELECT shortCode FROM operators WHERE {regionORfed} ='{selectName}' LIMIT 1"));
+            codeListAdd($"SELECT codeFull FROM operators WHERE {regionORfed} ='{selectName}'"); // reset the limit // delete previous number when it`s bigger than const number  
                          // +79005813051 // shortCode = 3 symbols // fullCode = 3+ symbols // finalNumber = 10 symbols (without "7+")
                 //long code = 904;
             foreach (long number in codeFull)
@@ -731,7 +728,6 @@ namespace RandomNumber
                     writer.WriteLine(number);
                 }
             }
-            //MessageBox.Show($"howmany = {howManyNumbers.ToString()} \n finalNumbers={finalNumbers.Count}");
         }
         private void codeListAdd(string sql) // rewrite switch{}case to add more list<> for operatorsName, codeShort, codeFull recognition
         {
