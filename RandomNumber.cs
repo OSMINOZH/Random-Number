@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using System.Windows.Forms;
+using System.IO;
+using MySqlConnector;
 
 namespace RandomNumber
 {
@@ -18,9 +20,12 @@ namespace RandomNumber
         {
             InitializeComponent();
         }
-        private string fedDistrict, region, typeNumber;
-        private int townCode = 0, countNumbers = 0, howManyNumbers = 0, utc;
+        private string fedDistrict, region, typeNumber;                         // USED TO GENERATE NUMBERS ONLY
+        private int townCode = 0, countNumbers = 0, howManyNumbers = 0, utc;    // USED TO GENERATE NUMBERS ONLY
         private bool prefixOn = false;
+        private List<string> finalNumbers = new List<string>();
+        private List<long> codeFull = new List<long>();
+        private bool maxNumberExist = false;
         private void AddItems(string typeBox)
         {
             if(typeBox == "fed")
@@ -171,13 +176,9 @@ namespace RandomNumber
                 }
             }
         }
-        private void FedDistrictComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            CodeSwitcher(FedDistrictComboBox.Text, "", "");
-        }
         private void CodeSwitcher(string fedDistrictC, string regionC, string typeNumberC)
         {
-            switch (fedDistrictC)
+            switch (fedDistrictC) // Сделать блокирование comboboxRegion и появление при изменении валидного значения в comboboxFed
             {
                 case "all":
                     HideChoices(true, "fed");
@@ -305,459 +306,385 @@ namespace RandomNumber
                     RegionComboBox.Items.Add("Чукотский автономный округ");
                     RegionComboBox.Items.Add("Камчатский край");
                     break;
-            }
+            } // Добавлены UTC по округам
             switch (regionC)
             {
                 case "all": // Adds all regions
-                    HideChoices(true, "reg");
-                    RegionComboBox.Items.Add("Не выбран");
-                    RegionComboBox.Items.Add("Белгородская область");
-                    RegionComboBox.Items.Add("Брянская область");
-                    RegionComboBox.Items.Add("Владимирская область");
-                    RegionComboBox.Items.Add("Воронежская область");
-                    RegionComboBox.Items.Add("Ивановская область");
-                    RegionComboBox.Items.Add("Калужская область");
-                    RegionComboBox.Items.Add("Костромская область");
-                    RegionComboBox.Items.Add("Курская область");
-                    RegionComboBox.Items.Add("Липецкая область");
-                    RegionComboBox.Items.Add("Московская область");
-                    RegionComboBox.Items.Add("Орловская область");
-                    RegionComboBox.Items.Add("Рязанская область");
-                    RegionComboBox.Items.Add("Смоленская область");
-                    RegionComboBox.Items.Add("Тамбовская область");
-                    RegionComboBox.Items.Add("Тверская область");
-                    RegionComboBox.Items.Add("Тульская область");
-                    RegionComboBox.Items.Add("Ярославская область");
-                    RegionComboBox.Items.Add("Республика Карелия");
-                    RegionComboBox.Items.Add("Республика Коми");
-                    RegionComboBox.Items.Add("Архангельская область");
-                    RegionComboBox.Items.Add("Ненецкий автономный округ");
-                    RegionComboBox.Items.Add("Вологодская область");
-                    RegionComboBox.Items.Add("Калининградская область");
-                    RegionComboBox.Items.Add("Ленинградская область");
-                    RegionComboBox.Items.Add("Мурманская область");
-                    RegionComboBox.Items.Add("Новгородская область");
-                    RegionComboBox.Items.Add("Псковская область");
-                    RegionComboBox.Items.Add("Республика Адыгея");
-                    RegionComboBox.Items.Add("Республика Калмыкия");
-                    RegionComboBox.Items.Add("Республика Крым");
-                    RegionComboBox.Items.Add("Краснодарский край");
-                    RegionComboBox.Items.Add("Астраханская область");
-                    RegionComboBox.Items.Add("Волгоградская область");
-                    RegionComboBox.Items.Add("Ростовская область");
-                    RegionComboBox.Items.Add("Республика Дагестан");
-                    RegionComboBox.Items.Add("Республика Ингушетия");
-                    RegionComboBox.Items.Add("Кабардино - Балкарская Республика");
-                    RegionComboBox.Items.Add("Карачаево - Черкесская Республика");
-                    RegionComboBox.Items.Add("Республика Северная Осетия-Алания");
-                    RegionComboBox.Items.Add("Чеченская Республика");
-                    RegionComboBox.Items.Add("Ставропольский край");
-                    RegionComboBox.Items.Add("Республика Башкортостан");
-                    RegionComboBox.Items.Add("Республика Марий Эл");
-                    RegionComboBox.Items.Add("Республика Мордовия");
-                    RegionComboBox.Items.Add("Республика Татарстан");
-                    RegionComboBox.Items.Add("Удмуртская Республика");
-                    RegionComboBox.Items.Add("Чувашская Республика");
-                    RegionComboBox.Items.Add("Пермский край");
-                    RegionComboBox.Items.Add("Кировская область");
-                    RegionComboBox.Items.Add("Нижегородская область");
-                    RegionComboBox.Items.Add("Оренбургская область");
-                    RegionComboBox.Items.Add("Пензенская область");
-                    RegionComboBox.Items.Add("Самарская область");
-                    RegionComboBox.Items.Add("Саратовская область");
-                    RegionComboBox.Items.Add("Ульяновская область");
-                    RegionComboBox.Items.Add("Курганская область");
-                    RegionComboBox.Items.Add("Свердловская область");
-                    RegionComboBox.Items.Add("Тюменская область");
-                    RegionComboBox.Items.Add("Ханты - Мансийский автономный округ");
-                    RegionComboBox.Items.Add("Ямало - Ненецкий автономный округ");
-                    RegionComboBox.Items.Add("Челябинская область");
-                    RegionComboBox.Items.Add("Республика Алтай");
-                    RegionComboBox.Items.Add("Республика Тыва");
-                    RegionComboBox.Items.Add("Республика Хакасия");
-                    RegionComboBox.Items.Add("Алтайский край");
-                    RegionComboBox.Items.Add("Красноярский край");
-                    RegionComboBox.Items.Add("Иркутская область");
-                    RegionComboBox.Items.Add("Кемеровская область");
-                    RegionComboBox.Items.Add("Новосибирская область");
-                    RegionComboBox.Items.Add("Омская область");
-                    RegionComboBox.Items.Add("Томская область");
-                    RegionComboBox.Items.Add("Республика Бурятия");
-                    RegionComboBox.Items.Add("Республика Саха (Якутия)");
-                    RegionComboBox.Items.Add("Забайкальский край");
-                    RegionComboBox.Items.Add("Амурская область");
-                    RegionComboBox.Items.Add("Приморский край");
-                    RegionComboBox.Items.Add("Хабаровский край");
-                    RegionComboBox.Items.Add("Еврейская автономная область");
-                    RegionComboBox.Items.Add("Магаданская область");
-                    RegionComboBox.Items.Add("Сахалинская область");
-                    RegionComboBox.Items.Add("Чукотский автономный округ");
-                    RegionComboBox.Items.Add("Камчатский край");
                     break;
                 case "Не выбран":
-                    HideChoices(false, "fed");
                     break;
                 case "Белгородская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Брянская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Владимирская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Воронежская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Ивановская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Калужская область":
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                    //Центральный ФО");
                     break;
                 case "Костромская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Курская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Липецкая область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Московская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Москва":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Орловская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Рязанская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Смоленская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Тамбовская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Тверская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Тульская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Ярославская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Центральный ФО");
+                     
+                    //Центральный ФО");
                     break;
                 case "Республика Карелия":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Республика Коми":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Архангельская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Ненецкий автономный округ":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Вологодская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Калининградская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                    utc = 2; // UTC +2
+                    //Северо-Западный ФО");
                     break;
                 case "Ленинградская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Мурманская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Новгородская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Псковская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Западный ФО");
+                     
+                    //Северо-Западный ФО");
                     break;
                 case "Республика Адыгея":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                     
+                    //Южный ФО");
                     break;
                 case "Республика Калмыкия":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                     
+                    //Южный ФО");
                     break;
                 case "Республика Крым":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                     
+                    //Южный ФО");
                     break;
                 case "Краснодарский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                     
+                    //Южный ФО");
                     break;
                 case "Астраханская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                    utc = 4;
+                    //Южный ФО");
                     break;
                 case "Волгоградская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                     
+                    //Южный ФО");
                     break;
                 case "Ростовская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Южный ФО");
+                     
+                    //Южный ФО");
                     break;
                 case "Республика Дагестан":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Республика Ингушетия":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Кабардино-Балкарская Республика":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Карачаево-Черкесская Республика":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Республика Северная Осетия-Алания":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Чеченская Республика":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Ставропольский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Северо-Кавказский ФО");
+                     
+                    //Северо-Кавказский ФО");
                     break;
                 case "Республика Башкортостан":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 5;
+                    //Приволжский ФО");
                     break;
                 case "Республика Марий Эл":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Республика Мордовия":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Республика Татарстан":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Удмуртская Республика":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 4;
+                    //Приволжский ФО");
                     break;
                 case "Чувашская Республика":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Пермский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 5;
+                    //Приволжский ФО");
                     break;
                 case "Кировская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Нижегородская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Оренбургская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 5;
+                    //Приволжский ФО");
                     break;
                 case "Пензенская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Санкт-Петербург":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 3;
+                    //Приволжский ФО");
                     break;
                 case "Самарская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 4;
+                    //Приволжский ФО");
                     break;
                 case "Саратовская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 4;
+                    //Приволжский ФО");
                     break;
                 case "Ульяновская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Приволжский ФО");
+                    utc = 4;
+                    //Приволжский ФО");
                     break;
                 case "Курганская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Уральский ФО");
+                     
+                    //Уральский ФО");
                     break;
                 case "Свердловская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Уральский ФО");
+                     
+                    //Уральский ФО");
                     break;
                 case "Тюменская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Уральский ФО");
+                     
+                    //Уральский ФО");
                     break;
                 case "Ханты-Мансийский автономный округ":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Уральский ФО");
+                     
+                    //Уральский ФО");
                     break;
                 case "Ямало-Ненецкий автономный округ":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Уральский ФО");
+                     
+                    //Уральский ФО");
                     break;
                 case "Челябинская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Уральский ФО");
+                     
+                    //Уральский ФО");
                     break;
                 case "Республика Алтай":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Республика Тыва":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Республика Хакасия":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Алтайский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Красноярский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Иркутская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 8;
+                    //Сибирский ФО");
                     break;
                 case "Кемеровская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Новосибирская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Омская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 6;
+                    //Сибирский ФО");
                     break;
                 case "Томская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Сибирский ФО");
+                    utc = 7;
+                    //Сибирский ФО");
                     break;
                 case "Республика Бурятия":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 8;
+                    //Дальневосточный ФО");
                     break;
                 case "Республика Саха (Якутия)":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 9;
+                    //Дальневосточный ФО");
                     break;
                 case "Забайкальский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 9;
+                    //Дальневосточный ФО");
                     break;
                 case "Амурская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 9;
+                    //Дальневосточный ФО");
                     break;
                 case "Приморский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 10;
+                    //Дальневосточный ФО");
                     break;
                 case "Хабаровский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 10;
+                    //Дальневосточный ФО");
                     break;
                 case "Еврейская автономная область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 10;
+                    //Дальневосточный ФО");
                     break;
                 case "Магаданская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 11;
+                    //Дальневосточный ФО");
                     break;
                 case "Сахалинская область":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 11;
+                    //Дальневосточный ФО");
                     break;
                 case "Чукотский автономный округ":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 12;
+                    //Дальневосточный ФО");
                     break;
                 case "Камчатский край":
-                    HideChoices(true, "fed");
-                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");
+                    utc = 12;
+                    //Дальневосточный ФО");
                     break;
-            }
+            }      // Добавлены UTC по регионам
             switch (typeNumberC)
             {
                 case "Мобильный":
-                    
+                    typeNumber = "Мобильный";
                     break;
                 case "Стационарный":
-                    
+                    typeNumber = "Стационарный";
                     break;
             }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+
+        }
+
+        private void FedDistrictComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CodeSwitcher(FedDistrictComboBox.Text, "", "");
+        }
+
+        private void TypeNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CodeSwitcher("", "", TypeNumberComboBox.Text);
         }
 
         private void RegionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //CodeSwitcher(FedDistrictComboBox.Text, "", "");
+            CodeSwitcher("", RegionComboBox.Text, "");
         }
 
         private void GenerateNumbersBTN_Click(object sender, EventArgs e)
         {
-            fedDistrict = FedDistrictComboBox.Text;
-            region = RegionComboBox.Text;
-            typeNumber = TypeNumberComboBox.Text;
+            fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
+            region = RegionComboBox.SelectedItem.ToString();
+            typeNumber = TypeNumberComboBox.SelectedItem.ToString();
             howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
 
             GenerateNumbers();
@@ -774,12 +701,118 @@ namespace RandomNumber
             Logger.WriteLog($"");
         }
 
-        private void GenerateNumbers()
+        private void GenerateNumbers() // maybe async start in future !!!
         {
-            for (int i = 0; i < howManyNumbers; i++)
+            codeFull.Clear();        // Очищение списка перед присваиванием
+            finalNumbers.Clear();   // Очищение списка перед присваиванием
+            string operatorName = (LoadWriteData($"SELECT operatorName FROM operators WHERE region ='{region}' LIMIT 1"));
+            int shortCode = Convert.ToInt32(LoadWriteData($"SELECT shortCode FROM operators WHERE region ='{region}' LIMIT 1"));
+            codeListAdd($"SELECT codeFull FROM operators WHERE region ='{region}'"); // reset the limit // delete previous number when it`s bigger than const number  
+                         // +79005813051 // shortCode = 3 symbols // fullCode = 3+ symbols // finalNumber = 10 symbols (without "7+")
+                //long code = 904;
+            foreach (long number in codeFull)
             {
-                //finalNumber = $"";
+                long maxNumber = number + 1;
+                long curNumber = number;
+                //int numberSymbCount = curNumber.ToString().Length;
+                for (int numberSymbCount = curNumber.ToString().Length; numberSymbCount < 10; numberSymbCount++) maxNumber *= 10;
+                for (int numberSymbCount = curNumber.ToString().Length; numberSymbCount < 10; numberSymbCount++) curNumber *= 10;
+                for (; curNumber < maxNumber; curNumber++) // j<9999999 // 9999999 is max numbers in phone number by single 3-symbols code // probly j.lenght would work same
+                {
+                    finalNumbers.Add($"{curNumber.ToString()}");
+                    if (finalNumbers.Count == howManyNumbers) break;
+                }
+                if (finalNumbers.Count == howManyNumbers) break;
             }
+            using (StreamWriter writer = new StreamWriter("output.txt"))
+            {
+                foreach (string number in finalNumbers)
+                {
+                    writer.WriteLine(number);
+                }
+            }
+            //MessageBox.Show($"howmany = {howManyNumbers.ToString()} \n finalNumbers={finalNumbers.Count}");
+        }
+        private void codeListAdd(string sql) // rewrite switch{}case to add more list<> for operatorsName, codeShort, codeFull recognition
+        {
+            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
+            con.Open();
+            using (MySqlCommand command = new MySqlCommand(sql, con))
+            {
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        codeFull.Add((long)reader["codeFull"]);
+                    }
+                }
+            }
+            con.Close();
+        }
+        private string LoadWriteData(string sql)
+        {
+            //"Server=myServerAddress;Database=myDatabase;Uid=myUsername;Pwd=myPassword;";
+            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
+            con.Open();
+            string sqlcom = sql;
+            MySqlCommand cmd = new MySqlCommand(sqlcom, con);
+            object data = cmd.ExecuteScalar();
+            if (data != null)
+            {
+                string udata = data.ToString();
+                con.Close();
+                return udata;
+            }
+            else
+            {
+                con.Close();
+                MessageBox.Show("Информация не найдена в базе данных");
+            }
+            return "null";
+        }
+        private void LoadWriteBunchData(string sql)
+        {
+            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
+            con.Open();
+            using (StreamWriter writer = new StreamWriter("output1.txt"))
+            {
+                using (MySqlCommand command = new MySqlCommand(sql, con))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            writer.WriteLine(reader["operatorName"].ToString());
+                            writer.WriteLine(reader["shortCode"].ToString());
+                        }
+                    }
+                }
+            }
+            con.Close();
+        }
+        private void CheckMaxNumber(int number)
+        {
+            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
+            con.Open();
+            string sqlcom = $"SELECT codeFull WHERE codeFull LIKE '%{number}%'";
+            MySqlCommand cmd = new MySqlCommand(sqlcom, con);
+            object data = cmd.ExecuteScalar();
+            if (data != null)
+            {
+                string udata = data.ToString();
+                con.Close();
+                maxNumberExist = true;
+            }
+            else
+            {
+                con.Close();
+                MessageBox.Show("Информация не найдена в базе данных");
+                maxNumberExist = false;
+            }
+        }
+        private void Operators()
+        {
+
         }
     }
 }

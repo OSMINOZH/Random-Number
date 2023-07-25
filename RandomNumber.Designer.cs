@@ -227,7 +227,7 @@ namespace RandomNumber
             this.TypeNumberComboBox.Size = new System.Drawing.Size(221, 49);
             this.TypeNumberComboBox.StartIndex = 0;
             this.TypeNumberComboBox.TabIndex = 3;
-            this.TypeNumberComboBox.SelectedIndexChanged += new System.EventHandler(this.FedDistrictComboBox_SelectedIndexChanged);
+            this.TypeNumberComboBox.SelectedIndexChanged += new System.EventHandler(this.TypeNumberComboBox_SelectedIndexChanged);
             // 
             // AmountMaskedTextBox
             // 
