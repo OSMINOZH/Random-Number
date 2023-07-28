@@ -24,13 +24,12 @@ namespace RandomNumber
         private int townCode = 0, countNumbers = 0, howManyNumbers = 0;    // USED TO GENERATE NUMBERS ONLY
         private bool prefixOn = false;
         private List<string> finalNumbers = new List<string>();
-        private List<string> operatorName = new List<string>();
         private List<long> codeFull = new List<long>();
         private List<string> utc = new List<string>();
         private bool maxNumberExist = false;
         private void AddItems(string typeBox)
         {
-            if(typeBox == "fed")
+            if (typeBox == "fed")
             {
                 // FedList Add Items
                 List<string> fedList = new List<string>();
@@ -49,7 +48,7 @@ namespace RandomNumber
                     RegionComboBox.Items.Add(fedList[i]);
                 }
             }
-            else if(typeBox == "reg")
+            else if (typeBox == "reg")
             {
                 // RegList Add Items
                 List<string> regList = new List<string>();
@@ -137,7 +136,7 @@ namespace RandomNumber
                 regList.Add("Чукотский автономный округ");
                 regList.Add("Камчатский край");
                 // cycle to Fill comboBox 
-                for (int i=0; i<=regList.Count; i++)
+                for (int i = 0; i <= regList.Count; i++)
                 {
                     RegionComboBox.Items.Add(regList[i]);
                 }
@@ -146,7 +145,7 @@ namespace RandomNumber
         }
         private void HideChoices(bool toHide, string choices)
         {
-            if(toHide)
+            if (toHide)
             {
                 switch (choices)
                 {
@@ -162,7 +161,7 @@ namespace RandomNumber
                         break;
                 }
             }
-            else if(!toHide)
+            else if (!toHide)
             {
                 switch (choices)
                 {
@@ -184,15 +183,15 @@ namespace RandomNumber
             {
                 case "all":
                     HideChoices(true, "fed");
-                        FedDistrictComboBox.Items.Add("Не выбран");
-                        FedDistrictComboBox.Items.Add("Центральный ФО");         // UTC3
-                        FedDistrictComboBox.Items.Add("Северо - Западный ФО");   // UTC3 (Калининград UTC2)
-                        FedDistrictComboBox.Items.Add("Южный ФО");               // UTC3 (Астраханская область UTC4)
-                        FedDistrictComboBox.Items.Add("Северо - Кавказский ФО"); // UTC3 
-                        FedDistrictComboBox.Items.Add("Приволжский ФО");         // разные UTC
-                        FedDistrictComboBox.Items.Add("Уральский ФО");           // UTC5
-                        FedDistrictComboBox.Items.Add("Сибирский ФО");           // разные UTC
-                        FedDistrictComboBox.Items.Add("Дальневосточный ФО");     // разные UTC
+                    FedDistrictComboBox.Items.Add("Не выбран");
+                    FedDistrictComboBox.Items.Add("Центральный ФО");         // UTC3
+                    FedDistrictComboBox.Items.Add("Северо - Западный ФО");   // UTC3 (Калининград UTC2)
+                    FedDistrictComboBox.Items.Add("Южный ФО");               // UTC3 (Астраханская область UTC4)
+                    FedDistrictComboBox.Items.Add("Северо - Кавказский ФО"); // UTC3 
+                    FedDistrictComboBox.Items.Add("Приволжский ФО");         // разные UTC
+                    FedDistrictComboBox.Items.Add("Уральский ФО");           // UTC5
+                    FedDistrictComboBox.Items.Add("Сибирский ФО");           // разные UTC
+                    FedDistrictComboBox.Items.Add("Дальневосточный ФО");     // разные UTC
                     break;
                 case "Не выбран":
                     HideChoices(false, "reg");
@@ -316,94 +315,94 @@ namespace RandomNumber
                 case "Не выбран":
                     break;
                 case "Белгородская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Брянская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Владимирская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Воронежская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Ивановская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Калужская область":
                     //Центральный ФО");
                     break;
                 case "Костромская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Курская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Липецкая область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Московская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Москва":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Орловская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Рязанская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Смоленская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Тамбовская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Тверская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Тульская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Ярославская область":
-                     
+
                     //Центральный ФО");
                     break;
                 case "Республика Карелия":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Республика Коми":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Архангельская область":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Ненецкий автономный округ":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Вологодская область":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Калининградская область":
@@ -411,35 +410,35 @@ namespace RandomNumber
                     //Северо-Западный ФО");
                     break;
                 case "Ленинградская область":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Мурманская область":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Новгородская область":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Псковская область":
-                     
+
                     //Северо-Западный ФО");
                     break;
                 case "Республика Адыгея":
-                     
+
                     //Южный ФО");
                     break;
                 case "Республика Калмыкия":
-                     
+
                     //Южный ФО");
                     break;
                 case "Республика Крым":
-                     
+
                     //Южный ФО");
                     break;
                 case "Краснодарский край":
-                     
+
                     //Южный ФО");
                     break;
                 case "Астраханская область":
@@ -447,39 +446,39 @@ namespace RandomNumber
                     //Южный ФО");
                     break;
                 case "Волгоградская область":
-                     
+
                     //Южный ФО");
                     break;
                 case "Ростовская область":
-                     
+
                     //Южный ФО");
                     break;
                 case "Республика Дагестан":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Республика Ингушетия":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Кабардино-Балкарская Республика":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Карачаево-Черкесская Республика":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Республика Северная Осетия-Алания":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Чеченская Республика":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Ставропольский край":
-                     
+
                     //Северо-Кавказский ФО");
                     break;
                 case "Республика Башкортостан":
@@ -543,27 +542,27 @@ namespace RandomNumber
                     //Приволжский ФО");
                     break;
                 case "Курганская область":
-                     
+
                     //Уральский ФО");
                     break;
                 case "Свердловская область":
-                     
+
                     //Уральский ФО");
                     break;
                 case "Тюменская область":
-                     
+
                     //Уральский ФО");
                     break;
                 case "Ханты-Мансийский автономный округ":
-                     
+
                     //Уральский ФО");
                     break;
                 case "Ямало-Ненецкий автономный округ":
-                     
+
                     //Уральский ФО");
                     break;
                 case "Челябинская область":
-                     
+
                     //Уральский ФО");
                     break;
                 case "Республика Алтай":
@@ -669,7 +668,7 @@ namespace RandomNumber
 
             // TEMPORARY //
             if (TypeNumberComboBox.SelectedItem.ToString() == "Стационарный") GenerateNumbersBTN.Enabled = false;
-            else if (FedDistrictComboBox.SelectedItem.ToString() != "Не выбран")GenerateNumbersBTN.Enabled = true;
+            else if (FedDistrictComboBox.SelectedItem.ToString() != "Не выбран") GenerateNumbersBTN.Enabled = true;
         }
 
         private void FedDistrictComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -693,107 +692,94 @@ namespace RandomNumber
             region = RegionComboBox.SelectedItem.ToString();
             typeNumber = TypeNumberComboBox.SelectedItem.ToString();
             howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
-            if (region == "Не выбран")
-                GenerateNumbers("fed", fedDistrict);
-            else
-                GenerateNumbers("region", region);
+            if (region == "Не выбран") GenerateNumbers("fed", fedDistrict); // Fed or Region switcher
+            else GenerateNumbers("region", region);
         }
 
-        private void GenerateNumbers(string regionORfed, string selectName)
+        private void GenerateNumbers(string regionORfed, string selectName) // maybe async start in future !!!
         {
-            // Initialize the connection if it's not already done
-            if (connection == null)
+            codeFull.Clear();             // Очищение списка перед присваиванием
+            finalNumbers.Clear();        // Очищение списка перед присваиванием
+            utc.Clear();                // Очищение списка перед присваиванием // Needs a limit
+
+            //operatorNameAdd($"SELECT operatorName FROM operators WHERE {regionORfed} ='{selectName}'");
+            //utcAdd($"SELECT utc FROM operators WHERE {regionORfed} ='{selectName}'");
+            codeListAdd($"SELECT codeFull FROM operators WHERE {regionORfed} ='{selectName}'"); // reset the limit // delete previous number when it`s bigger than const number  
+                     // +79005813051 // shortCode = 3 symbols // fullCode = 3+ symbols // finalNumber = 10 symbols (without "7+")
+            //long code = 904;
+            foreach (long number in codeFull)
             {
-                string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
-                connection = new MySqlConnection(connectionString);
-                connection.Open();
+                //utcAdd($"SELECT utc FROM operators WHERE codeFull ={number}");
+                //operatorNameAdd($"SELECT operatorName FROM operators WHERE codeFull ={number}");
+                long maxNumber = number + 1;
+                long curNumber = number;
+                //int numberSymbCount = curNumber.ToString().Length;
+                for (int numberSymbCount = curNumber.ToString().Length; numberSymbCount < 10; numberSymbCount++) maxNumber *= 10;
+                for (int numberSymbCount = curNumber.ToString().Length; numberSymbCount < 10; numberSymbCount++) curNumber *= 10;
+                for (; curNumber < maxNumber; curNumber++) // j<9999999 // 9999999 is max numbers in phone number by single 3-symbols code // probly j.lenght would work same
+                {
+                    //utcAdd($"SELECT utc FROM operators WHERE codeFull ={number}");
+                    finalNumbers.Add($"{curNumber.ToString()}");
+                    if (finalNumbers.Count == howManyNumbers) break;
+                }
+                if (finalNumbers.Count == howManyNumbers) break;
             }
-
-            codeFull.Clear();
-            finalNumbers.Clear();
-            operatorName.Clear();
-            utc.Clear();
-
-            // Fetch all data from the database in one query
-            string query = $"SELECT codeFull, operatorName FROM operators WHERE {regionORfed} = @selectName LIMIT {howManyNumbers}";
-            FetchDataFromDatabase(query, regionORfed, selectName);
-
-            GeneratePhoneNumbers();
-
-            LoadWriteBunchData();
-        }
-
-        private void FetchDataFromDatabase(string query, string regionORfed, string selectName)
+            LoadWriteBunchData(); // function to write data to the output file with multiple columns
+        } // 25.07.2023 СНИЗУ ЗАКОНЧИЛ
+        private void utcAdd(string sql)
         {
-            using (MySqlCommand command = new MySqlCommand(query, connection))
+            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
+            con.Open();
+            using (MySqlCommand command = new MySqlCommand(sql, con))
             {
-                command.Parameters.AddWithValue("@selectName", selectName);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        utc.Add((string)reader["utc"]);
+                        if (utc.Count == howManyNumbers) break;
+                    }
+                }
+            }
+            con.Close();
+        } // Добавляет utc по всем кодам которые идут по порядку, надо сделать чтобы utc добавлялись в порядке номера, а не кода.
+        private void codeListAdd(string sql)   // rewrite switch{}case to add more list<> for operatorsName, codeShort, codeFull recognition
+        {
+            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
+            con.Open();
+            using (MySqlCommand command = new MySqlCommand(sql, con))
+            {
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         codeFull.Add((long)reader["codeFull"]);
-                        //operatorName.Add((string)reader["operatorName"]);
-                        //utc.Add((string)reader["utc"]);
+                        if (codeFull.Count == howManyNumbers) break;
                     }
                 }
             }
-        }
-
-        private void GeneratePhoneNumbers()
-        {
-            foreach (long number in codeFull)
-            {
-                long maxNumber = number + 1;
-                long curNumber = number;
-                for (int numberSymbCount = curNumber.ToString().Length; numberSymbCount < 10; numberSymbCount++)
-                { maxNumber *= 10; curNumber *= 10; }
-
-                for (; curNumber < maxNumber; curNumber++)
-                {
-                    finalNumbers.Add($"{curNumber.ToString()}");
-                    // Получаем данные из базы данных для текущего number и заносим их в список utc
-                    string utcValue = GetUtcFromDatabase($"SELECT utc FROM operators WHERE codeFull={number}");
-                    utc.Add(utcValue);
-                    string operatorNameValue = GetUtcFromDatabase($"SELECT operatorName FROM operators WHERE codeFull={number}");
-                    operatorName.Add(operatorNameValue);
-                    if (finalNumbers.Count == howManyNumbers) break;
-                }
-
-                if (finalNumbers.Count == howManyNumbers) break;
-            }
-        }
-
-        private string GetUtcFromDatabase(string sql)
-        {
-            // Используем отдельное подключение к базе данных для каждого запроса
-            using (MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;"))
-            {
-                con.Open();
-                using (MySqlCommand command = new MySqlCommand(sql, con))
-                {
-                    object result = command.ExecuteScalar();
-                    return (result != null) ? result.ToString() : string.Empty;
-                }
-            }
+            con.Close();
         }
         private void LoadWriteBunchData()
         {
             using (StreamWriter writer = new StreamWriter("output.txt"))
             {
-                int maxCount = Math.Max(finalNumbers.Count, Math.Max(operatorName.Count, Math.Max(codeFull.Count, utc.Count)));
+                // Determine the maximum number of elements in the lists.
+                int maxCount = Math.Max(finalNumbers.Count, Math.Max(codeFull.Count, utc.Count));
 
-                // Write data in batches to the output file
+                // Iterate through the lists and write the corresponding data to different columns.
                 for (int i = 0; i < maxCount; i++)
                 {
                     string number = (i < finalNumbers.Count) ? finalNumbers[i] : string.Empty;
-                    string name = (i < operatorName.Count) ? operatorName[i] : string.Empty;
                     long code = (i < codeFull.Count) ? codeFull[i] : 0;
+                    utcAdd($"SELECT utc FROM operators WHERE codeFull ={code}");
                     string timeZone = (i < utc.Count) ? utc[i] : string.Empty;
 
-                    writer.WriteLine($"{number}\t{name}\t{timeZone}\t{region}\t{fedDistrict}");
+                    writer.WriteLine($"{number}\t{timeZone}\t{region}\t{fedDistrict}");
                 }
             }
+
+            //writer.WriteLine($"{number}\t{name}\t{timeZone}\t{region}\t{fedDistrict}"); // add in the end of func "\t{projectName}"
         }
         private void CheckMaxNumber(int number)
         {
