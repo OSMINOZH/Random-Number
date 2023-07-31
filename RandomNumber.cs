@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MaterialSkin;
 using MaterialSkin.Controls;
 using System.Windows.Forms;
 using System.IO;
 using MySqlConnector;
+using OfficeOpenXml;
 
 namespace RandomNumber
 {
@@ -19,7 +13,9 @@ namespace RandomNumber
         public RandomNumber()
         {
             InitializeComponent();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
+        private MySqlConnection connection;
         private string fedDistrict, region, typeNumber;                         // USED TO GENERATE NUMBERS ONLY
         private int townCode = 0, countNumbers = 0, howManyNumbers = 0;    // USED TO GENERATE NUMBERS ONLY
         private bool prefixOn = false;
@@ -665,7 +661,6 @@ namespace RandomNumber
                     break;
             }
         }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (FedDistrictComboBox.SelectedItem.ToString() == "Не выбран") { GenerateNumbersBTN.Enabled = false; RegionComboBox.Enabled = false; }
@@ -675,22 +670,18 @@ namespace RandomNumber
             if (TypeNumberComboBox.SelectedItem.ToString() == "Стационарный") GenerateNumbersBTN.Enabled = false;
             else if (FedDistrictComboBox.SelectedItem.ToString() != "Не выбран") GenerateNumbersBTN.Enabled = true;
         }
-
         private void FedDistrictComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             CodeSwitcher(FedDistrictComboBox.Text, "", "");
         }
-
         private void TypeNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             CodeSwitcher("", "", TypeNumberComboBox.Text);
         }
-
         private void RegionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             CodeSwitcher("", RegionComboBox.Text, "");
         }
-        private MySqlConnection connection;
         private void ShowInputBox()
         {
             using (InputBoxForm inputBox = new InputBoxForm())
@@ -707,7 +698,6 @@ namespace RandomNumber
                     howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
                     if (region == "Не выбран") GenerateNumbers("fed", fedDistrict); // Fed or Region switcher
                     else GenerateNumbers("region", region);
-
                 }
                 else if (inputBox.ShowDialog() == DialogResult.Cancel)
                 {
@@ -715,12 +705,10 @@ namespace RandomNumber
                 }
             }
         }
-
         private void GenerateNumbersBTN_Click(object sender, EventArgs e)
         {
             ShowInputBox();
         }
-
         private void GenerateNumbers(string regionORfed, string selectName) // maybe async start in future !!!
         {
             codeFull.Clear();
@@ -792,7 +780,38 @@ namespace RandomNumber
                 }
             }
 
-            //writer.WriteLine($"{number}\t{name}\t{timeZone}\t{region}\t{fedDistrict}"); // add in the end of func "\t{projectName}"
+            ConvertToExcel("output.txt", "excel_output.xlsx");
+        }
+        private void ConvertToExcel(string txtFilePath, string excelFilePath)
+        {
+            int currentRow = 1; // Счетчик текущей строки в Excel файле
+            int fileNumber = 1; // Счетчик номера Excel файла
+
+            // Create a new Excel package
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                // Create a new worksheet in the Excel file
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"{projectName}");
+
+                // Read the content of the .txt file
+                string[] lines = File.ReadAllLines(txtFilePath);
+
+                // Loop through each line in the .txt file and split by tab
+                for (int row = 0; row < lines.Length; row++)
+                {
+                    string[] cells = lines[row].Split('\t');
+
+                    // Loop through each cell in the line and add the value to the Excel worksheet
+                    for (int col = 0; col < cells.Length; col++)
+                    {
+                        worksheet.Cells[row + 1, col + 1].Value = cells[col];
+                    }
+                }
+
+                // Save the Excel package to a file
+                FileInfo excelFile = new FileInfo(excelFilePath);
+                package.SaveAs(excelFile);
+            }
         }
     }
 }
