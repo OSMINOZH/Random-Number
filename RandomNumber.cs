@@ -779,39 +779,49 @@ namespace RandomNumber
                     writer.WriteLine($"{number}\t{timeZone}\t{regionValue}\t{fedDistrict}\t{projectName}");
                 }
             }
-
-            ConvertToExcel("output.txt", "excel_output.xlsx");
+            if(divideCheckbox.CheckState==CheckState.Unchecked) ConvertToExcel("output.txt", $"{projectName}.xlsx", 1000000); // лимит в 1 млн номеров одновременно
+            else if (divideCheckbox.CheckState == CheckState.Checked) ConvertToExcel("output.txt", $"{projectName}.xlsx", 50000);
         }
-        private void ConvertToExcel(string txtFilePath, string excelFilePath)
+        private void ConvertToExcel(string txtFilePath, string excelFilePath, int maxRows)
         {
-            int currentRow = 1; // Счетчик текущей строки в Excel файле
+            // Read the content of the .txt file
+            string[] lines = File.ReadAllLines(txtFilePath);
+
+            int totalRows = lines.Length; // Общее количество строк в текстовом файле
+            int currentRow = 0; // Счетчик текущей строки в текстовом файле
             int fileNumber = 1; // Счетчик номера Excel файла
 
-            // Create a new Excel package
-            using (ExcelPackage package = new ExcelPackage())
+            while (currentRow < totalRows)
             {
-                // Create a new worksheet in the Excel file
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"{projectName}");
-
-                // Read the content of the .txt file
-                string[] lines = File.ReadAllLines(txtFilePath);
-
-                // Loop through each line in the .txt file and split by tab
-                for (int row = 0; row < lines.Length; row++)
+                // Create a new Excel package for each file
+                using (ExcelPackage package = new ExcelPackage())
                 {
-                    string[] cells = lines[row].Split('\t');
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"{projectName}_{fileNumber}");
 
-                    // Loop through each cell in the line and add the value to the Excel worksheet
-                    for (int col = 0; col < cells.Length; col++)
+                    // Записываем строки в Excel файл
+                    for (int row = 1; row <= maxRows && currentRow < totalRows; row++)
                     {
-                        worksheet.Cells[row + 1, col + 1].Value = cells[col];
+                        string line = lines[currentRow];
+                        string[] cells = line.Split('\t');
+
+                        // Loop through each cell in the line and add the value to the Excel worksheet
+                        for (int col = 0; col < cells.Length; col++)
+                        {
+                            worksheet.Cells[row, col + 1].Value = cells[col];
+                        }
+
+                        currentRow++;
                     }
+
+                    // Save the Excel package to a file
+                    string newFilePath = Path.Combine(Path.GetDirectoryName(excelFilePath), $"{Path.GetFileNameWithoutExtension(excelFilePath)}_{fileNumber}.xlsx");
+                    FileInfo excelFile = new FileInfo(newFilePath);
+                    package.SaveAs(excelFile);
                 }
 
-                // Save the Excel package to a file
-                FileInfo excelFile = new FileInfo(excelFilePath);
-                package.SaveAs(excelFile);
+                fileNumber++;
             }
         }
+
     }
 }
