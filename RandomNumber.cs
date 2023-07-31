@@ -26,6 +26,11 @@ namespace RandomNumber
         private List<string> finalNumbers = new List<string>();
         private List<long> codeFull = new List<long>();
         private List<string> utc = new List<string>();
+        private List<string> regions = new List<string>();
+        private List<string> finalUtc = new List<string>();
+        private List<string> finalRegions = new List<string>();
+        private int index = 0;
+        private string projectName;
         private bool maxNumberExist = false;
         private void AddItems(string typeBox)
         {
@@ -686,27 +691,67 @@ namespace RandomNumber
             CodeSwitcher("", RegionComboBox.Text, "");
         }
         private MySqlConnection connection;
+        private void ShowInputBox()
+        {
+            using (InputBoxForm inputBox = new InputBoxForm())
+            {
+                if (inputBox.ShowDialog() == DialogResult.OK)
+                {
+                    // Получаем текст, введенный пользователем
+                    projectName = inputBox.inputText;
+                    MessageBox.Show("Генерация началась");
+
+                    fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
+                    region = RegionComboBox.SelectedItem.ToString();
+                    typeNumber = TypeNumberComboBox.SelectedItem.ToString();
+                    howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
+                    if (region == "Не выбран") GenerateNumbers("fed", fedDistrict); // Fed or Region switcher
+                    else GenerateNumbers("region", region);
+
+                }
+                else if (inputBox.ShowDialog() == DialogResult.Cancel)
+                {
+                    MessageBox.Show("Введите название проекта");
+                }
+            }
+        }
+
         private void GenerateNumbersBTN_Click(object sender, EventArgs e)
         {
-            fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
-            region = RegionComboBox.SelectedItem.ToString();
-            typeNumber = TypeNumberComboBox.SelectedItem.ToString();
-            howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
-            if (region == "Не выбран") GenerateNumbers("fed", fedDistrict); // Fed or Region switcher
-            else GenerateNumbers("region", region);
+            ShowInputBox();
         }
 
         private void GenerateNumbers(string regionORfed, string selectName) // maybe async start in future !!!
         {
-            codeFull.Clear();             // Очищение списка перед присваиванием
-            finalNumbers.Clear();        // Очищение списка перед присваиванием
-            utc.Clear();                // Очищение списка перед присваиванием // Needs a limit
+            codeFull.Clear();
+            finalNumbers.Clear();
+            utc.Clear();
+            regions.Clear();
+            finalUtc.Clear();
+            finalRegions.Clear();
 
-            //operatorNameAdd($"SELECT operatorName FROM operators WHERE {regionORfed} ='{selectName}'");
-            //utcAdd($"SELECT utc FROM operators WHERE {regionORfed} ='{selectName}'");
-            codeListAdd($"SELECT codeFull FROM operators WHERE {regionORfed} ='{selectName}'"); // reset the limit // delete previous number when it`s bigger than const number  
-                     // +79005813051 // shortCode = 3 symbols // fullCode = 3+ symbols // finalNumber = 10 symbols (without "7+")
-            //long code = 904;
+            if (connection == null)
+            {
+                string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
+                connection = new MySqlConnection(connectionString);
+                connection.Open();
+            }
+
+            string query = $"SELECT codeFull, utc, region FROM operators WHERE {regionORfed} = '{selectName}'";
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@selectName", selectName);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        codeFull.Add((long)reader["codeFull"]);
+                        utc.Add((string)reader["utc"]);
+                        regions.Add((string)reader["region"]);
+                    }
+                }
+            }
+
             foreach (long number in codeFull)
             {
                 //utcAdd($"SELECT utc FROM operators WHERE codeFull ={number}");
@@ -720,90 +765,34 @@ namespace RandomNumber
                 {
                     //utcAdd($"SELECT utc FROM operators WHERE codeFull ={number}");
                     finalNumbers.Add($"{curNumber.ToString()}");
+                    finalUtc.Add(utc[index]);
+                    finalRegions.Add(regions[index]);
                     if (finalNumbers.Count == howManyNumbers) break;
                 }
                 if (finalNumbers.Count == howManyNumbers) break;
+                index++;
             }
             LoadWriteBunchData(); // function to write data to the output file with multiple columns
         } // 25.07.2023 СНИЗУ ЗАКОНЧИЛ
-        private void utcAdd(string sql)
-        {
-            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
-            con.Open();
-            using (MySqlCommand command = new MySqlCommand(sql, con))
-            {
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        utc.Add((string)reader["utc"]);
-                        if (utc.Count == howManyNumbers) break;
-                    }
-                }
-            }
-            con.Close();
-        } // Добавляет utc по всем кодам которые идут по порядку, надо сделать чтобы utc добавлялись в порядке номера, а не кода.
-        private void codeListAdd(string sql)   // rewrite switch{}case to add more list<> for operatorsName, codeShort, codeFull recognition
-        {
-            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
-            con.Open();
-            using (MySqlCommand command = new MySqlCommand(sql, con))
-            {
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        codeFull.Add((long)reader["codeFull"]);
-                        if (codeFull.Count == howManyNumbers) break;
-                    }
-                }
-            }
-            con.Close();
-        }
         private void LoadWriteBunchData()
         {
             using (StreamWriter writer = new StreamWriter("output.txt"))
             {
                 // Determine the maximum number of elements in the lists.
-                int maxCount = Math.Max(finalNumbers.Count, Math.Max(codeFull.Count, utc.Count));
+                int maxCount = Math.Max(finalNumbers.Count, Math.Max(codeFull.Count, Math.Max(finalUtc.Count, finalRegions.Count)));
 
-                // Iterate through the lists and write the corresponding data to different columns.
                 for (int i = 0; i < maxCount; i++)
                 {
                     string number = (i < finalNumbers.Count) ? finalNumbers[i] : string.Empty;
                     long code = (i < codeFull.Count) ? codeFull[i] : 0;
-                    utcAdd($"SELECT utc FROM operators WHERE codeFull ={code}");
-                    string timeZone = (i < utc.Count) ? utc[i] : string.Empty;
+                    string timeZone = (i < finalUtc.Count) ? finalUtc[i] : string.Empty;
+                    string regionValue = (i < finalRegions.Count) ? finalRegions[i] : string.Empty;
 
-                    writer.WriteLine($"{number}\t{timeZone}\t{region}\t{fedDistrict}");
+                    writer.WriteLine($"{number}\t{timeZone}\t{regionValue}\t{fedDistrict}\t{projectName}");
                 }
             }
 
             //writer.WriteLine($"{number}\t{name}\t{timeZone}\t{region}\t{fedDistrict}"); // add in the end of func "\t{projectName}"
-        }
-        private void CheckMaxNumber(int number)
-        {
-            MySqlConnection con = new MySqlConnection("server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;");
-            con.Open();
-            string sqlcom = $"SELECT codeFull WHERE codeFull LIKE '%{number}%'";
-            MySqlCommand cmd = new MySqlCommand(sqlcom, con);
-            object data = cmd.ExecuteScalar();
-            if (data != null)
-            {
-                string udata = data.ToString();
-                con.Close();
-                maxNumberExist = true;
-            }
-            else
-            {
-                con.Close();
-                MessageBox.Show("Информация не найдена в базе данных");
-                maxNumberExist = false;
-            }
-        }
-        private void Operators()
-        {
-
         }
     }
 }
