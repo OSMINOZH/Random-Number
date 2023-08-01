@@ -33,10 +33,10 @@ namespace RandomNumber
             this.GenerateNumbersBTN = new MaterialSkin.Controls.MaterialButton();
             this.FedDistrictComboBox = new MaterialSkin.Controls.MaterialComboBox();
             this.RegionComboBox = new MaterialSkin.Controls.MaterialComboBox();
-            this.TypeNumberComboBox = new MaterialSkin.Controls.MaterialComboBox();
             this.AmountMaskedTextBox = new MaterialSkin.Controls.MaterialMaskedTextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.divideCheckbox = new MaterialSkin.Controls.MaterialCheckbox();
+            this.noDuplicateCheckbox = new MaterialSkin.Controls.MaterialCheckbox();
             this.SuspendLayout();
             // 
             // GenerateNumbersBTN
@@ -46,7 +46,7 @@ namespace RandomNumber
             this.GenerateNumbersBTN.Depth = 0;
             this.GenerateNumbersBTN.HighEmphasis = true;
             this.GenerateNumbersBTN.Icon = null;
-            this.GenerateNumbersBTN.Location = new System.Drawing.Point(302, 180);
+            this.GenerateNumbersBTN.Location = new System.Drawing.Point(41, 307);
             this.GenerateNumbersBTN.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.GenerateNumbersBTN.MouseState = MaterialSkin.MouseState.HOVER;
             this.GenerateNumbersBTN.Name = "GenerateNumbersBTN";
@@ -194,41 +194,14 @@ namespace RandomNumber
             "Сахалинская область",
             "Чукотский автономный округ",
             "Камчатский край"});
-            this.RegionComboBox.Location = new System.Drawing.Point(233, 67);
+            this.RegionComboBox.Location = new System.Drawing.Point(6, 121);
             this.RegionComboBox.MaxDropDownItems = 4;
             this.RegionComboBox.MouseState = MaterialSkin.MouseState.OUT;
             this.RegionComboBox.Name = "RegionComboBox";
-            this.RegionComboBox.Size = new System.Drawing.Size(212, 49);
+            this.RegionComboBox.Size = new System.Drawing.Size(221, 49);
             this.RegionComboBox.StartIndex = 0;
             this.RegionComboBox.TabIndex = 3;
             this.RegionComboBox.SelectedIndexChanged += new System.EventHandler(this.RegionComboBox_SelectedIndexChanged);
-            // 
-            // TypeNumberComboBox
-            // 
-            this.TypeNumberComboBox.AutoResize = false;
-            this.TypeNumberComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.TypeNumberComboBox.Depth = 0;
-            this.TypeNumberComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.TypeNumberComboBox.DropDownHeight = 174;
-            this.TypeNumberComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.TypeNumberComboBox.DropDownWidth = 121;
-            this.TypeNumberComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.TypeNumberComboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.TypeNumberComboBox.FormattingEnabled = true;
-            this.TypeNumberComboBox.Hint = "Тип номера";
-            this.TypeNumberComboBox.IntegralHeight = false;
-            this.TypeNumberComboBox.ItemHeight = 43;
-            this.TypeNumberComboBox.Items.AddRange(new object[] {
-            "Мобильный",
-            "Стационарный"});
-            this.TypeNumberComboBox.Location = new System.Drawing.Point(233, 122);
-            this.TypeNumberComboBox.MaxDropDownItems = 4;
-            this.TypeNumberComboBox.MouseState = MaterialSkin.MouseState.OUT;
-            this.TypeNumberComboBox.Name = "TypeNumberComboBox";
-            this.TypeNumberComboBox.Size = new System.Drawing.Size(212, 49);
-            this.TypeNumberComboBox.StartIndex = 0;
-            this.TypeNumberComboBox.TabIndex = 3;
-            this.TypeNumberComboBox.SelectedIndexChanged += new System.EventHandler(this.TypeNumberComboBox_SelectedIndexChanged);
             // 
             // AmountMaskedTextBox
             // 
@@ -240,12 +213,13 @@ namespace RandomNumber
             this.AmountMaskedTextBox.CutCopyMaskFormat = System.Windows.Forms.MaskFormat.IncludeLiterals;
             this.AmountMaskedTextBox.Depth = 0;
             this.AmountMaskedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.AmountMaskedTextBox.HelperText = "Не боле 500\'000 номеров за раз";
             this.AmountMaskedTextBox.HidePromptOnLeave = false;
             this.AmountMaskedTextBox.HideSelection = true;
             this.AmountMaskedTextBox.Hint = "Кол-во";
             this.AmountMaskedTextBox.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Default;
             this.AmountMaskedTextBox.LeadingIcon = null;
-            this.AmountMaskedTextBox.Location = new System.Drawing.Point(6, 122);
+            this.AmountMaskedTextBox.Location = new System.Drawing.Point(6, 176);
             this.AmountMaskedTextBox.Mask = "";
             this.AmountMaskedTextBox.MaxLength = 32767;
             this.AmountMaskedTextBox.MouseState = MaterialSkin.MouseState.OUT;
@@ -281,7 +255,7 @@ namespace RandomNumber
             // 
             this.divideCheckbox.AutoSize = true;
             this.divideCheckbox.Depth = 0;
-            this.divideCheckbox.Location = new System.Drawing.Point(6, 179);
+            this.divideCheckbox.Location = new System.Drawing.Point(6, 227);
             this.divideCheckbox.Margin = new System.Windows.Forms.Padding(0);
             this.divideCheckbox.MouseLocation = new System.Drawing.Point(-1, -1);
             this.divideCheckbox.MouseState = MaterialSkin.MouseState.HOVER;
@@ -293,14 +267,30 @@ namespace RandomNumber
             this.divideCheckbox.Text = "Разделить файлы?";
             this.divideCheckbox.UseVisualStyleBackColor = true;
             // 
+            // noDuplicateCheckbox
+            // 
+            this.noDuplicateCheckbox.AutoSize = true;
+            this.noDuplicateCheckbox.Depth = 0;
+            this.noDuplicateCheckbox.Location = new System.Drawing.Point(6, 264);
+            this.noDuplicateCheckbox.Margin = new System.Windows.Forms.Padding(0);
+            this.noDuplicateCheckbox.MouseLocation = new System.Drawing.Point(-1, -1);
+            this.noDuplicateCheckbox.MouseState = MaterialSkin.MouseState.HOVER;
+            this.noDuplicateCheckbox.Name = "noDuplicateCheckbox";
+            this.noDuplicateCheckbox.ReadOnly = false;
+            this.noDuplicateCheckbox.Ripple = true;
+            this.noDuplicateCheckbox.Size = new System.Drawing.Size(189, 37);
+            this.noDuplicateCheckbox.TabIndex = 5;
+            this.noDuplicateCheckbox.Text = "Убрать повторения?";
+            this.noDuplicateCheckbox.UseVisualStyleBackColor = true;
+            // 
             // RandomNumber
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(451, 224);
+            this.ClientSize = new System.Drawing.Size(235, 349);
+            this.Controls.Add(this.noDuplicateCheckbox);
             this.Controls.Add(this.divideCheckbox);
             this.Controls.Add(this.AmountMaskedTextBox);
-            this.Controls.Add(this.TypeNumberComboBox);
             this.Controls.Add(this.RegionComboBox);
             this.Controls.Add(this.FedDistrictComboBox);
             this.Controls.Add(this.GenerateNumbersBTN);
@@ -315,10 +305,10 @@ namespace RandomNumber
         private MaterialSkin.Controls.MaterialButton GenerateNumbersBTN;
         private MaterialSkin.Controls.MaterialComboBox FedDistrictComboBox;
         private MaterialSkin.Controls.MaterialComboBox RegionComboBox;
-        private MaterialSkin.Controls.MaterialComboBox TypeNumberComboBox;
         private MaterialSkin.Controls.MaterialMaskedTextBox AmountMaskedTextBox;
         private System.Windows.Forms.Timer timer1;
         private MaterialSkin.Controls.MaterialCheckbox divideCheckbox;
+        private MaterialSkin.Controls.MaterialCheckbox noDuplicateCheckbox;
     }
 }
 

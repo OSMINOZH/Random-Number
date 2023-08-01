@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using MySqlConnector;
 using OfficeOpenXml;
+using System.Data;
 
 namespace RandomNumber
 {
@@ -16,134 +17,137 @@ namespace RandomNumber
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
         private MySqlConnection connection;
-        private string fedDistrict, region, typeNumber;                         // USED TO GENERATE NUMBERS ONLY
-        private int townCode = 0, countNumbers = 0, howManyNumbers = 0;    // USED TO GENERATE NUMBERS ONLY
-        private bool prefixOn = false;
+        private string fedDistrict, region;                        // USED TO GENERATE NUMBERS ONLY
+        private int howManyNumbers = 0;    // USED TO GENERATE NUMBERS ONLY
         private List<long> finalNumbers = new List<long>();
+        private List<long> uniquefinalNumbers = new List<long>();
         private List<long> codeFull = new List<long>();
         private List<string> utc = new List<string>();
         private List<string> regions = new List<string>();
         private List<string> finalUtc = new List<string>();
         private List<string> finalRegions = new List<string>();
+        private List<string> uniquefinalUtc = new List<string>();
+        private List<string> uniquefinalRegions = new List<string>();
         private HashSet<long> uniqueNumbers = new HashSet<long>();
         private int index = 0;
         private string projectName;
-        private void AddItems(string typeBox)
-        {
-            if (typeBox == "fed")
-            {
-                // FedList Add Items
-                List<string> fedList = new List<string>();
-                fedList.Add("Центральный ФО"); // FedList Add Items
-                fedList.Add("Не выбран");
-                fedList.Add("Северо-Западный ФО");
-                fedList.Add("Южный ФО");
-                fedList.Add("Северо-Кавказский ФО");
-                fedList.Add("Приволжский ФО");
-                fedList.Add("Уральский ФО");
-                fedList.Add("Сибирский ФО");
-                fedList.Add("Дальневосточный ФО");
-                // cycle to Fill comboBox 
-                for (int i = 0; i <= fedList.Count; i++)
-                {
-                    RegionComboBox.Items.Add(fedList[i]);
-                }
-            }
-            else if (typeBox == "reg")
-            {
-                // RegList Add Items
-                List<string> regList = new List<string>();
-                regList.Add("Не выбран"); // RegList Add Items
-                regList.Add("Белгородская область");
-                regList.Add("Брянская область");
-                regList.Add("Владимирская область");
-                regList.Add("Воронежская область");
-                regList.Add("Ивановская область");
-                regList.Add("Калужская область");
-                regList.Add("Костромская область");
-                regList.Add("Курская область");
-                regList.Add("Липецкая область");
-                regList.Add("Московская область");
-                regList.Add("Орловская область");
-                regList.Add("Рязанская область");
-                regList.Add("Смоленская область");
-                regList.Add("Тамбовская область");
-                regList.Add("Тверская область");
-                regList.Add("Тульская область");
-                regList.Add("Ярославская область");
-                regList.Add("Республика Карелия");
-                regList.Add("Республика Коми");
-                regList.Add("Архангельская область");
-                regList.Add("Ненецкий автономный округ");
-                regList.Add("Вологодская область");
-                regList.Add("Калининградская область");
-                regList.Add("Ленинградская область");
-                regList.Add("Мурманская область");
-                regList.Add("Новгородская область");
-                regList.Add("Псковская область");
-                regList.Add("Республика Адыгея");
-                regList.Add("Республика Калмыкия");
-                regList.Add("Республика Крым");
-                regList.Add("Краснодарский край");
-                regList.Add("Астраханская область");
-                regList.Add("Волгоградская область");
-                regList.Add("Ростовская область");
-                regList.Add("Республика Дагестан");
-                regList.Add("Республика Ингушетия");
-                regList.Add("Кабардино-Балкарская Республика");
-                regList.Add("Карачаево-Черкесская Республика");
-                regList.Add("Республика Северная Осетия-Алания");
-                regList.Add("Чеченская Республика");
-                regList.Add("Ставропольский край");
-                regList.Add("Республика Башкортостан");
-                regList.Add("Республика Марий Эл");
-                regList.Add("Республика Мордовия");
-                regList.Add("Республика Татарстан");
-                regList.Add("Удмуртская Республика");
-                regList.Add("Чувашская Республика");
-                regList.Add("Пермский край");
-                regList.Add("Кировская область");
-                regList.Add("Нижегородская область");
-                regList.Add("Оренбургская область");
-                regList.Add("Пензенская область");
-                regList.Add("Самарская область");
-                regList.Add("Саратовская область");
-                regList.Add("Ульяновская область");
-                regList.Add("Курганская область");
-                regList.Add("Свердловская область");
-                regList.Add("Тюменская область");
-                regList.Add("Ханты-Мансийский автономный округ");
-                regList.Add("Ямало-Ненецкий автономный округ");
-                regList.Add("Челябинская область");
-                regList.Add("Республика Алтай");
-                regList.Add("Республика Тыва");
-                regList.Add("Республика Хакасия");
-                regList.Add("Алтайский край");
-                regList.Add("Красноярский край");
-                regList.Add("Иркутская область");
-                regList.Add("Кемеровская область");
-                regList.Add("Новосибирская область");
-                regList.Add("Омская область");
-                regList.Add("Томская область");
-                regList.Add("Республика Бурятия");
-                regList.Add("Республика Саха (Якутия)");
-                regList.Add("Забайкальский край");
-                regList.Add("Амурская область");
-                regList.Add("Приморский край");
-                regList.Add("Хабаровский край");
-                regList.Add("Еврейская автономная область");
-                regList.Add("Магаданская область");
-                regList.Add("Сахалинская область");
-                regList.Add("Чукотский автономный округ");
-                regList.Add("Камчатский край");
-                // cycle to Fill comboBox 
-                for (int i = 0; i <= regList.Count; i++)
-                {
-                    RegionComboBox.Items.Add(regList[i]);
-                }
+        private string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
+        //private void AddItems(string typeBox)
+        //{
+        //    if (typeBox == "fed")
+        //    {
+        //        // FedList Add Items
+        //        List<string> fedList = new List<string>();
+        //        fedList.Add("Центральный ФО"); // FedList Add Items
+        //        fedList.Add("Не выбран");
+        //        fedList.Add("Северо-Западный ФО");
+        //        fedList.Add("Южный ФО");
+        //        fedList.Add("Северо-Кавказский ФО");
+        //        fedList.Add("Приволжский ФО");
+        //        fedList.Add("Уральский ФО");
+        //        fedList.Add("Сибирский ФО");
+        //        fedList.Add("Дальневосточный ФО");
+        //        // cycle to Fill comboBox 
+        //        for (int i = 0; i <= fedList.Count; i++)
+        //        {
+        //            RegionComboBox.Items.Add(fedList[i]);
+        //        }
+        //    }
+        //    else if (typeBox == "reg")
+        //    {
+        //        // RegList Add Items
+        //        List<string> regList = new List<string>();
+        //        regList.Add("Не выбран"); // RegList Add Items
+        //        regList.Add("Белгородская область");
+        //        regList.Add("Брянская область");
+        //        regList.Add("Владимирская область");
+        //        regList.Add("Воронежская область");
+        //        regList.Add("Ивановская область");
+        //        regList.Add("Калужская область");
+        //        regList.Add("Костромская область");
+        //        regList.Add("Курская область");
+        //        regList.Add("Липецкая область");
+        //        regList.Add("Московская область");
+        //        regList.Add("Орловская область");
+        //        regList.Add("Рязанская область");
+        //        regList.Add("Смоленская область");
+        //        regList.Add("Тамбовская область");
+        //        regList.Add("Тверская область");
+        //        regList.Add("Тульская область");
+        //        regList.Add("Ярославская область");
+        //        regList.Add("Республика Карелия");
+        //        regList.Add("Республика Коми");
+        //        regList.Add("Архангельская область");
+        //        regList.Add("Ненецкий автономный округ");
+        //        regList.Add("Вологодская область");
+        //        regList.Add("Калининградская область");
+        //        regList.Add("Ленинградская область");
+        //        regList.Add("Мурманская область");
+        //        regList.Add("Новгородская область");
+        //        regList.Add("Псковская область");
+        //        regList.Add("Республика Адыгея");
+        //        regList.Add("Республика Калмыкия");
+        //        regList.Add("Республика Крым");
+        //        regList.Add("Краснодарский край");
+        //        regList.Add("Астраханская область");
+        //        regList.Add("Волгоградская область");
+        //        regList.Add("Ростовская область");
+        //        regList.Add("Республика Дагестан");
+        //        regList.Add("Республика Ингушетия");
+        //        regList.Add("Кабардино-Балкарская Республика");
+        //        regList.Add("Карачаево-Черкесская Республика");
+        //        regList.Add("Республика Северная Осетия-Алания");
+        //        regList.Add("Чеченская Республика");
+        //        regList.Add("Ставропольский край");
+        //        regList.Add("Республика Башкортостан");
+        //        regList.Add("Республика Марий Эл");
+        //        regList.Add("Республика Мордовия");
+        //        regList.Add("Республика Татарстан");
+        //        regList.Add("Удмуртская Республика");
+        //        regList.Add("Чувашская Республика");
+        //        regList.Add("Пермский край");
+        //        regList.Add("Кировская область");
+        //        regList.Add("Нижегородская область");
+        //        regList.Add("Оренбургская область");
+        //        regList.Add("Пензенская область");
+        //        regList.Add("Самарская область");
+        //        regList.Add("Саратовская область");
+        //        regList.Add("Ульяновская область");
+        //        regList.Add("Курганская область");
+        //        regList.Add("Свердловская область");
+        //        regList.Add("Тюменская область");
+        //        regList.Add("Ханты-Мансийский автономный округ");
+        //        regList.Add("Ямало-Ненецкий автономный округ");
+        //        regList.Add("Челябинская область");
+        //        regList.Add("Республика Алтай");
+        //        regList.Add("Республика Тыва");
+        //        regList.Add("Республика Хакасия");
+        //        regList.Add("Алтайский край");
+        //        regList.Add("Красноярский край");
+        //        regList.Add("Иркутская область");
+        //        regList.Add("Кемеровская область");
+        //        regList.Add("Новосибирская область");
+        //        regList.Add("Омская область");
+        //        regList.Add("Томская область");
+        //        regList.Add("Республика Бурятия");
+        //        regList.Add("Республика Саха (Якутия)");
+        //        regList.Add("Забайкальский край");
+        //        regList.Add("Амурская область");
+        //        regList.Add("Приморский край");
+        //        regList.Add("Хабаровский край");
+        //        regList.Add("Еврейская автономная область");
+        //        regList.Add("Магаданская область");
+        //        regList.Add("Сахалинская область");
+        //        regList.Add("Чукотский автономный округ");
+        //        regList.Add("Камчатский край");
+        //        // cycle to Fill comboBox 
+        //        for (int i = 0; i <= regList.Count; i++)
+        //        {
+        //            RegionComboBox.Items.Add(regList[i]);
+        //        }
 
-            }
-        }
+        //    }
+        //}
         private void HideChoices(bool toHide, string choices)
         {
             if (toHide)
@@ -693,6 +697,8 @@ namespace RandomNumber
         }
         private void GenerateNumbers(string regionORfed, string selectName) // maybe async start in future !!!
         {
+            // Очистка всех коллекций и ресурсов перед началом работы
+            index = 0;
             codeFull.Clear();
             finalNumbers.Clear();
             utc.Clear();
@@ -700,10 +706,12 @@ namespace RandomNumber
             finalUtc.Clear();
             finalRegions.Clear();
             uniqueNumbers.Clear();
-                
+            uniquefinalNumbers.Clear();
+            uniquefinalUtc.Clear();
+            uniquefinalRegions.Clear();
+
             if (connection == null)
             {
-                string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
                 connection = new MySqlConnection(connectionString);
                 connection.Open();
             }
@@ -754,6 +762,9 @@ namespace RandomNumber
                             finalUtc.Add(utc[index]);
                             finalRegions.Add(regions[index]);
                             //uniqueNumbers.Add(curNumber);
+                            uniquefinalNumbers.Add(curNumber);
+                            uniquefinalUtc.Add(utc[index]);
+                            uniquefinalRegions.Add(regions[index]);
                         }
                     }
                     else if (noDuplicateCheckbox.CheckState == CheckState.Unchecked) // ВСЕ НОМЕРА
@@ -761,13 +772,24 @@ namespace RandomNumber
                         finalNumbers.Add(curNumber);
                         finalUtc.Add(utc[index]);
                         finalRegions.Add(regions[index]);
+
+                        if (!uniqueNumbers.Contains(curNumber))
+                        {
+                            uniquefinalNumbers.Add(curNumber);
+                            uniquefinalUtc.Add(utc[index]);
+                            uniquefinalRegions.Add(regions[index]);
+                            //uniqueNumbers.Add(curNumber);
+                        }
                     }
                     if (finalNumbers.Count == howManyNumbers) break;
                 }
                 if (finalNumbers.Count == howManyNumbers) break;
                 index++;
             }
+            UniqueNumbers();
             LoadWriteBunchData(); // function to write data to the output file with multiple columns
+            Cleaner();
+            MessageBox.Show("Готово!");
         } // 25.07.2023 СНИЗУ ЗАКОНЧИЛ
         private void LoadWriteBunchData()
         {
@@ -784,7 +806,7 @@ namespace RandomNumber
                     string regionValue = (i < finalRegions.Count) ? finalRegions[i] : string.Empty;
 
                     writer.WriteLine($"{number}\t{timeZone}\t{regionValue}\t{fedDistrict}\t{projectName}");
-                    if (!uniqueNumbers.Contains(number)) InsertIntoDB(number, timeZone, regionValue, fedDistrict, projectName); // Заполнение бд для дальнейшей генерации без дубликатов, дописать
+                    /*if (!uniqueNumbers.Contains(number)) UniqueNumbers();*/ // Заполнение бд для дальнейшей генерации без дубликатов, дописать
                 }
             } // Ниже проверка на разбивку. Если выбрана, то по 50к номеров в отдельный файл excel. Если нет, то один файл excel лимитов в 1млн номеров.
             if(divideCheckbox.CheckState==CheckState.Unchecked) ConvertToExcel("output.txt", $"{projectName}.xlsx", 1000000); // лимит в 1 млн номеров одновременно
@@ -830,39 +852,106 @@ namespace RandomNumber
                 fileNumber++;
             }
         }
-        private void InsertIntoDB(long number, string timeZone, string regionValue, string fedDistrict, string projectName) // NOT TESTED YET
+        private void InsertIntoDB(string values) // NOT TESTED YET
         {
-            string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
-
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
 
-                string sql = "INSERT INTO resultnumbers (finalnumbers, utc, region, fed, projectName) " +
-                             "VALUES (@number, @timeZone, @regionValue, @fedDistrict, @projectName)";
+                string sql = $"INSERT INTO resultnumbers (finalnumbers, utc, region, fed, projectName) VALUES {values}";
 
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    // Добавляем параметры и их значения к команде
-                    command.Parameters.AddWithValue("@number", number);
-                    command.Parameters.AddWithValue("@timeZone", timeZone);
-                    command.Parameters.AddWithValue("@regionValue", regionValue);
-                    command.Parameters.AddWithValue("@fedDistrict", fedDistrict);
-                    command.Parameters.AddWithValue("@projectName", projectName);
-
                     try
                     {
                         // Выполняем команду
                         command.ExecuteNonQuery();
-
                     }
-                    catch (MySqlException)
+                    catch (MySqlException ex)
                     {
-
+                        //MessageBox.Show(ex.ToString());
                     }
                 }
             }
         }
+        private void UniqueNumbers()
+        {
+            int maxRows = 50000;
+            int curRow = 0;
+            int fileNumber = 1;
+            StreamWriter writer = new StreamWriter($"unique_numbers_{fileNumber}.txt");
 
+            try
+            {
+                // Determine the maximum number of elements in the lists.
+                int maxCount = Math.Max(uniquefinalNumbers.Count, Math.Max(uniquefinalUtc.Count, uniquefinalRegions.Count));
+
+                for (int i = 0; i < maxCount; i++)
+                {
+                    long number = (i < uniquefinalNumbers.Count) ? uniquefinalNumbers[i] : 0;
+                    string timeZone = (i < uniquefinalUtc.Count) ? uniquefinalUtc[i] : string.Empty;
+                    string regionValue = (i < uniquefinalRegions.Count) ? uniquefinalRegions[i] : string.Empty;
+
+                    if (curRow == maxRows-1 || i == maxCount-1) // Corrected condition
+                        writer.WriteLine($"({number},'{timeZone}','{regionValue}','{fedDistrict}','{projectName}');");
+                    else
+                        writer.WriteLine($"({number},'{timeZone}','{regionValue}','{fedDistrict}','{projectName}'),");
+
+                    curRow++;
+
+                    if (curRow == maxRows)
+                    {
+                        curRow = 0;
+
+                        writer.Close();
+
+                        string values = File.ReadAllText($"unique_numbers_{fileNumber}.txt");
+                        InsertIntoDB(values); // Insert the data from the current file into the database
+                        fileNumber++;
+                        // Create a new StreamWriter for the next file
+                        writer = new StreamWriter($"unique_numbers_{fileNumber}.txt");
+                    }
+                }
+            }
+            finally
+            {
+                writer.Close();
+            }
+
+            // Insert the data from the last file into the database
+            string lastFileValues = File.ReadAllText($"unique_numbers_{fileNumber}.txt");
+            InsertIntoDB(lastFileValues);
+        }
+        private void Cleaner()
+        {
+            try
+            {
+                // Очистка output.txt файла, если существует
+                string outputFilePath = "output.txt";
+                if (File.Exists(outputFilePath))
+                    File.Delete(outputFilePath);
+
+                // Очистка уникальных файлов unique_numbers_X.txt
+                int fileNumber = 1;
+                while (true)
+                {
+                    string uniqueFilePath = $"unique_numbers_{fileNumber}.txt";
+                    if (File.Exists(uniqueFilePath))
+                        File.Delete(uniqueFilePath);
+                    else
+                        break;
+                    fileNumber++;
+                }
+
+                // Закрытие соединения с базой данных, если оно открыто
+                if (connection != null && connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+            catch (Exception ex)
+            {
+                // Обработка возможных ошибок, если что-то пошло не так при очистке
+                MessageBox.Show($"Ошибка при очистке: {ex.Message}");
+            }
+        }
     }
 }
