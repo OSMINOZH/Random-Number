@@ -19,15 +19,15 @@ namespace RandomNumber
         private string fedDistrict, region, typeNumber;                         // USED TO GENERATE NUMBERS ONLY
         private int townCode = 0, countNumbers = 0, howManyNumbers = 0;    // USED TO GENERATE NUMBERS ONLY
         private bool prefixOn = false;
-        private List<string> finalNumbers = new List<string>();
+        private List<long> finalNumbers = new List<long>();
         private List<long> codeFull = new List<long>();
         private List<string> utc = new List<string>();
         private List<string> regions = new List<string>();
         private List<string> finalUtc = new List<string>();
         private List<string> finalRegions = new List<string>();
+        private HashSet<long> uniqueNumbers = new HashSet<long>();
         private int index = 0;
         private string projectName;
-        private bool maxNumberExist = false;
         private void AddItems(string typeBox)
         {
             if (typeBox == "fed")
@@ -651,32 +651,15 @@ namespace RandomNumber
                     //Дальневосточный ФО");
                     break;
             }      // Добавлены UTC по регионам
-            switch (typeNumberC)
-            {
-                case "Мобильный":
-                    typeNumber = "Мобильный";
-                    break;
-                case "Стационарный":
-                    typeNumber = "Стационарный";
-                    break;
-            }
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (FedDistrictComboBox.SelectedItem.ToString() == "Не выбран") { GenerateNumbersBTN.Enabled = false; RegionComboBox.Enabled = false; }
             else { GenerateNumbersBTN.Enabled = true; RegionComboBox.Enabled = true; }
-
-            // TEMPORARY //
-            if (TypeNumberComboBox.SelectedItem.ToString() == "Стационарный") GenerateNumbersBTN.Enabled = false;
-            else if (FedDistrictComboBox.SelectedItem.ToString() != "Не выбран") GenerateNumbersBTN.Enabled = true;
         }
         private void FedDistrictComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             CodeSwitcher(FedDistrictComboBox.Text, "", "");
-        }
-        private void TypeNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            CodeSwitcher("", "", TypeNumberComboBox.Text);
         }
         private void RegionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -694,7 +677,6 @@ namespace RandomNumber
 
                     fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
                     region = RegionComboBox.SelectedItem.ToString();
-                    typeNumber = TypeNumberComboBox.SelectedItem.ToString();
                     howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
                     if (region == "Не выбран") GenerateNumbers("fed", fedDistrict); // Fed or Region switcher
                     else GenerateNumbers("region", region);
@@ -717,15 +699,28 @@ namespace RandomNumber
             regions.Clear();
             finalUtc.Clear();
             finalRegions.Clear();
-
+            uniqueNumbers.Clear();
+                
             if (connection == null)
             {
                 string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
                 connection = new MySqlConnection(connectionString);
                 connection.Open();
             }
+            string query = $"SELECT finalnumbers FROM resultnumbers WHERE {regionORfed} = '{selectName}'";
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        long finalNumber = (long)reader["finalnumbers"];
+                        uniqueNumbers.Add(finalNumber);
+                    }
+                }
+            }
 
-            string query = $"SELECT codeFull, utc, region FROM operators WHERE {regionORfed} = '{selectName}'";
+            query = $"SELECT codeFull, utc, region FROM operators WHERE {regionORfed} = '{selectName}'";
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@selectName", selectName);
@@ -751,10 +746,22 @@ namespace RandomNumber
                 for (int numberSymbCount = curNumber.ToString().Length; numberSymbCount < 10; numberSymbCount++) curNumber *= 10;
                 for (; curNumber < maxNumber; curNumber++) // j<9999999 // 9999999 is max numbers in phone number by single 3-symbols code // probly j.lenght would work same
                 {
-                    //utcAdd($"SELECT utc FROM operators WHERE codeFull ={number}");
-                    finalNumbers.Add($"{curNumber.ToString()}");
-                    finalUtc.Add(utc[index]);
-                    finalRegions.Add(regions[index]);
+                    if (noDuplicateCheckbox.CheckState == CheckState.Checked) // БЕЗ ДУБЛИКАТОВ
+                    {
+                        if (!uniqueNumbers.Contains(curNumber))
+                        {
+                            finalNumbers.Add(curNumber);
+                            finalUtc.Add(utc[index]);
+                            finalRegions.Add(regions[index]);
+                            //uniqueNumbers.Add(curNumber);
+                        }
+                    }
+                    else if (noDuplicateCheckbox.CheckState == CheckState.Unchecked) // ВСЕ НОМЕРА
+                    {
+                        finalNumbers.Add(curNumber);
+                        finalUtc.Add(utc[index]);
+                        finalRegions.Add(regions[index]);
+                    }
                     if (finalNumbers.Count == howManyNumbers) break;
                 }
                 if (finalNumbers.Count == howManyNumbers) break;
@@ -771,14 +778,15 @@ namespace RandomNumber
 
                 for (int i = 0; i < maxCount; i++)
                 {
-                    string number = (i < finalNumbers.Count) ? finalNumbers[i] : string.Empty;
+                    long number = (i < finalNumbers.Count) ? finalNumbers[i] : 0;
                     long code = (i < codeFull.Count) ? codeFull[i] : 0;
                     string timeZone = (i < finalUtc.Count) ? finalUtc[i] : string.Empty;
                     string regionValue = (i < finalRegions.Count) ? finalRegions[i] : string.Empty;
 
                     writer.WriteLine($"{number}\t{timeZone}\t{regionValue}\t{fedDistrict}\t{projectName}");
+                    if (!uniqueNumbers.Contains(number)) InsertIntoDB(number, timeZone, regionValue, fedDistrict, projectName); // Заполнение бд для дальнейшей генерации без дубликатов, дописать
                 }
-            }
+            } // Ниже проверка на разбивку. Если выбрана, то по 50к номеров в отдельный файл excel. Если нет, то один файл excel лимитов в 1млн номеров.
             if(divideCheckbox.CheckState==CheckState.Unchecked) ConvertToExcel("output.txt", $"{projectName}.xlsx", 1000000); // лимит в 1 млн номеров одновременно
             else if (divideCheckbox.CheckState == CheckState.Checked) ConvertToExcel("output.txt", $"{projectName}.xlsx", 50000);
         }
@@ -820,6 +828,39 @@ namespace RandomNumber
                 }
 
                 fileNumber++;
+            }
+        }
+        private void InsertIntoDB(long number, string timeZone, string regionValue, string fedDistrict, string projectName) // NOT TESTED YET
+        {
+            string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = "INSERT INTO resultnumbers (finalnumbers, utc, region, fed, projectName) " +
+                             "VALUES (@number, @timeZone, @regionValue, @fedDistrict, @projectName)";
+
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    // Добавляем параметры и их значения к команде
+                    command.Parameters.AddWithValue("@number", number);
+                    command.Parameters.AddWithValue("@timeZone", timeZone);
+                    command.Parameters.AddWithValue("@regionValue", regionValue);
+                    command.Parameters.AddWithValue("@fedDistrict", fedDistrict);
+                    command.Parameters.AddWithValue("@projectName", projectName);
+
+                    try
+                    {
+                        // Выполняем команду
+                        command.ExecuteNonQuery();
+
+                    }
+                    catch (MySqlException)
+                    {
+
+                    }
+                }
             }
         }
 
