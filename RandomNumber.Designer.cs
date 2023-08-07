@@ -41,6 +41,9 @@ namespace RandomNumber
             // 
             // GenerateNumbersBTN
             // 
+            this.GenerateNumbersBTN.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.GenerateNumbersBTN.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GenerateNumbersBTN.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
             this.GenerateNumbersBTN.Depth = 0;
@@ -61,6 +64,9 @@ namespace RandomNumber
             // 
             // FedDistrictComboBox
             // 
+            this.FedDistrictComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.FedDistrictComboBox.AutoResize = false;
             this.FedDistrictComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.FedDistrictComboBox.Depth = 0;
@@ -95,6 +101,9 @@ namespace RandomNumber
             // 
             // RegionComboBox
             // 
+            this.RegionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.RegionComboBox.AutoResize = false;
             this.RegionComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.RegionComboBox.Depth = 0;
@@ -206,6 +215,9 @@ namespace RandomNumber
             // AmountMaskedTextBox
             // 
             this.AmountMaskedTextBox.AllowPromptAsInput = true;
+            this.AmountMaskedTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AmountMaskedTextBox.AnimateReadOnly = false;
             this.AmountMaskedTextBox.AsciiOnly = false;
             this.AmountMaskedTextBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -253,6 +265,9 @@ namespace RandomNumber
             // 
             // divideCheckbox
             // 
+            this.divideCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.divideCheckbox.AutoSize = true;
             this.divideCheckbox.Depth = 0;
             this.divideCheckbox.Location = new System.Drawing.Point(6, 227);
@@ -269,6 +284,9 @@ namespace RandomNumber
             // 
             // noDuplicateCheckbox
             // 
+            this.noDuplicateCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.noDuplicateCheckbox.AutoSize = true;
             this.noDuplicateCheckbox.Depth = 0;
             this.noDuplicateCheckbox.Location = new System.Drawing.Point(6, 264);
@@ -287,6 +305,7 @@ namespace RandomNumber
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(235, 349);
             this.Controls.Add(this.noDuplicateCheckbox);
             this.Controls.Add(this.divideCheckbox);
@@ -295,6 +314,7 @@ namespace RandomNumber
             this.Controls.Add(this.FedDistrictComboBox);
             this.Controls.Add(this.GenerateNumbersBTN);
             this.Name = "RandomNumber";
+            this.Sizable = false;
             this.Text = "Рандомизация номера";
             this.ResumeLayout(false);
             this.PerformLayout();

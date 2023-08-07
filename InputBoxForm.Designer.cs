@@ -40,7 +40,7 @@ namespace RandomNumber
             this.inputTextBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.inputTextBox.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.inputTextBox.Depth = 0;
-            this.inputTextBox.Font = new System.Drawing.Font("Roboto", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.inputTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.inputTextBox.HideSelection = true;
             this.inputTextBox.Hint = "Имя проекта:";
             this.inputTextBox.LeadingIcon = null;
@@ -114,6 +114,7 @@ namespace RandomNumber
             this.FormStyle = MaterialSkin.Controls.MaterialForm.FormStyles.ActionBar_None;
             this.Name = "InputBoxForm";
             this.Padding = new System.Windows.Forms.Padding(3, 24, 3, 3);
+            this.Sizable = false;
             this.Text = "InputBoxForm";
             this.ResumeLayout(false);
             this.PerformLayout();

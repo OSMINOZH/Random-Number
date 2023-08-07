@@ -6,11 +6,12 @@ using System.IO;
 using MySqlConnector;
 using OfficeOpenXml;
 using System.Data;
+using System.Drawing;
 
 namespace RandomNumber
 {
     public partial class RandomNumber : MaterialForm
-    {
+    {        
         public RandomNumber()
         {
             InitializeComponent();
@@ -29,9 +30,10 @@ namespace RandomNumber
         private List<string> uniquefinalUtc = new List<string>();
         private List<string> uniquefinalRegions = new List<string>();
         private HashSet<long> uniqueNumbers = new HashSet<long>();
+        private string folderPath;
         private int index = 0;
         private string projectName;
-        private string connectionString = "server=127.0.0.1;port=3306;database=workdb;uid=root;pwd=root;";
+        private string connectionString = "server=172.24.15.135;database=workdb;uid=user;pwd=4XL[UUN-4.j9rWPI;";
         //private void AddItems(string typeBox)
         //{
         //    if (typeBox == "fed")
@@ -680,7 +682,9 @@ namespace RandomNumber
                     MessageBox.Show("Генерация началась");
 
                     fedDistrict = FedDistrictComboBox.SelectedItem.ToString();
-                    region = RegionComboBox.SelectedItem.ToString();
+
+                    if (RegionComboBox.SelectedItem == null) region = "Не выбран";
+                    else region = RegionComboBox.SelectedItem.ToString();
                     howManyNumbers = Convert.ToInt32(AmountMaskedTextBox.Text);
                     if (region == "Не выбран") GenerateNumbers("fed", fedDistrict); // Fed or Region switcher
                     else GenerateNumbers("region", region);
@@ -697,6 +701,7 @@ namespace RandomNumber
         }
         private void GenerateNumbers(string regionORfed, string selectName) // maybe async start in future !!!
         {
+            CreateDesktopFolder(projectName); // Создание папки с именем проекта на рабочем столе
             // Очистка всех коллекций и ресурсов перед началом работы
             index = 0;
             codeFull.Clear();
@@ -710,7 +715,7 @@ namespace RandomNumber
             uniquefinalUtc.Clear();
             uniquefinalRegions.Clear();
 
-            if (connection == null)
+            if (connection == null || connection.State == ConnectionState.Closed)
             {
                 connection = new MySqlConnection(connectionString);
                 connection.Open();
@@ -798,7 +803,7 @@ namespace RandomNumber
                 // Determine the maximum number of elements in the lists.
                 int maxCount = Math.Max(finalNumbers.Count, Math.Max(codeFull.Count, Math.Max(finalUtc.Count, finalRegions.Count)));
 
-                for (int i = 0; i < maxCount; i++)
+                for (int i = 0; i < maxCount && i<howManyNumbers; i++)
                 {
                     long number = (i < finalNumbers.Count) ? finalNumbers[i] : 0;
                     long code = (i < codeFull.Count) ? codeFull[i] : 0;
@@ -828,8 +833,14 @@ namespace RandomNumber
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"{projectName}_{fileNumber}");
 
+                    worksheet.Cells[1, 1].Value = "Абонент";
+                    worksheet.Cells[1, 2].Value = "UTC";
+                    worksheet.Cells[1, 3].Value = "Регион";
+                    worksheet.Cells[1, 4].Value = "Федеральный Округ";
+                    worksheet.Cells[1, 5].Value = "Имя проекта";
+
                     // Записываем строки в Excel файл
-                    for (int row = 1; row <= maxRows && currentRow < totalRows; row++)
+                    for (int row = 2; row <= maxRows && currentRow < totalRows; row++)
                     {
                         string line = lines[currentRow];
                         string[] cells = line.Split('\t');
@@ -844,7 +855,7 @@ namespace RandomNumber
                     }
 
                     // Save the Excel package to a file
-                    string newFilePath = Path.Combine(Path.GetDirectoryName(excelFilePath), $"{Path.GetFileNameWithoutExtension(excelFilePath)}_{fileNumber}.xlsx");
+                    string newFilePath = Path.Combine(folderPath, $"{Path.GetFileNameWithoutExtension(excelFilePath)}_{fileNumber}.xlsx");
                     FileInfo excelFile = new FileInfo(newFilePath);
                     package.SaveAs(excelFile);
                 }
@@ -951,6 +962,22 @@ namespace RandomNumber
             {
                 // Обработка возможных ошибок, если что-то пошло не так при очистке
                 MessageBox.Show($"Ошибка при очистке: {ex.Message}");
+            }
+        }
+
+        private void CreateDesktopFolder(string folderName)
+        {
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            folderPath = Path.Combine(desktopPath, folderName);
+            // Проверяем, существует ли папка с таким именем
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+                Console.WriteLine($"Папка {folderName} успешно создана на рабочем столе.");
+            }
+            else
+            {
+                Console.WriteLine($"Папка {folderName} уже существует на рабочем столе.");
             }
         }
     }
